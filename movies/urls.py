@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import CreateMovieView
+from .views import ListCreateMovieView
 
 urlpatterns = [
-    path('', CreateMovieView.as_view(), name='create_movie')
+    path('', ListCreateMovieView.as_view(), name='list_create_movies'),
 ]

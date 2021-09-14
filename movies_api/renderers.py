@@ -4,8 +4,16 @@ from rest_framework.renderers import JSONRenderer
 class CustomJSONRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
         status = renderer_context.get('response').status_code
-        success_message = renderer_context.get('success_message')
-        message = data.get('detail', success_message)
+        success_message = renderer_context.get('success_message', None)
+
+        # When the 'data' data type is a rest_framework.utils.serializer_helpers.ReturnList,
+        # the get attribute won't be available. This causes the 'data.get()' to raise an AttrubuteError
+        # exception. In this case, set the message to the success_message.
+        try:
+            message = data.get('detail', success_message)
+        except Exception as e:
+            message = success_message
+
         detail_in_data = 'detail' in data
         errors = None
 
