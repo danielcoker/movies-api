@@ -1,5 +1,5 @@
 from rest_framework.generics import ListCreateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from movies_api.mixins import SuccessMessageMixin
 from .models import Movie
 from .serializers import MovieSerializer
@@ -8,7 +8,7 @@ from .serializers import MovieSerializer
 class ListCreateMovieView(SuccessMessageMixin, ListCreateAPIView):
     serializer_class = MovieSerializer
     queryset = Movie.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
