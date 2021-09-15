@@ -14,7 +14,11 @@ class CustomJSONRenderer(JSONRenderer):
         except Exception as e:
             message = success_message
 
-        detail_in_data = 'detail' in data
+        try:
+            detail_in_data = 'detail' in data
+        except Exception as e:
+            detail_in_data = False
+
         errors = None
 
         # If data contains "detail" field, it means the request failed and the an
