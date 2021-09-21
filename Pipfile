@@ -6,6 +6,7 @@ django = "*"
 psycopg2-binary = "*"
 djangorestframework = "*"
 django-environ = "*"
+inflection = "*"
 
 [dev-packages]
 autopep8 = "*"
