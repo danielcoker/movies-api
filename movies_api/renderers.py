@@ -1,10 +1,27 @@
 from rest_framework.renderers import JSONRenderer
+from rest_framework.utils.serializer_helpers import ReturnList
+import inflection
 
 
 class CustomJSONRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
+        actions = {'GET': 'retrieved', 'POST': 'created', 'PUT': 'updated'}
+
         status = renderer_context.get('response').status_code
+        request_method = renderer_context.get('request').method
+        action = actions.get(request_method, None)
+        resource_name = renderer_context.get('resource_name')
+
+        # Pluralize resource name if the data returned is a `list` type.
+        resource_name = inflection.pluralize(resource_name) if isinstance(
+            data, ReturnList) else resource_name
+
         success_message = renderer_context.get('success_message', None)
+
+        # Generate success message if a success message does not already exist,
+        # and the actino and resource name exist.
+        if not success_message and action and resource_name:
+            success_message = f'{resource_name} {action} successfully.'
 
         # When the 'data' data type is a rest_framework.utils.serializer_helpers.ReturnList,
         # the get attribute won't be available. This causes the 'data.get()' to raise an AttrubuteError
