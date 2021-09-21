@@ -6,6 +6,7 @@ import inflection
 class CustomJSONRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
         status = renderer_context.get('response').status_code
+        success_message = renderer_context.get('success_message', None)
 
         # Return an enpty body for responses with 204 status code.
         if status == 204:
@@ -22,12 +23,14 @@ class CustomJSONRenderer(JSONRenderer):
         resource_name = inflection.pluralize(resource_name) if isinstance(
             data, ReturnList) else resource_name
 
-        success_message = renderer_context.get('success_message', None)
-
         # Generate success message if a success message does not already exist,
         # and the actino and resource name exist.
         if not success_message and action and resource_name:
             success_message = f'{resource_name} {action} successfully.'
+
+        # If the status code is 404 and the resource name exist, add a descriptive 'not found' message.
+        if status == 404 and resource_name:
+            data['detail'] = f'{resource_name} does not exist.'
 
         # When the 'data' data type is a rest_framework.utils.serializer_helpers.ReturnList,
         # the get attribute won't be available. This causes the 'data.get()' to raise an AttrubuteError
@@ -44,7 +47,7 @@ class CustomJSONRenderer(JSONRenderer):
 
         errors = None
 
-        # If data contains "detail" field, it means the request failed and the an
+        # If data contains "detail" field, it means the request failed and the
         # error response message is available.
         # This error message should be returned only in the "message" field.
         if detail_in_data:
