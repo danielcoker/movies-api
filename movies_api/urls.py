@@ -19,7 +19,7 @@ from django.urls import path, include
 handler404 = 'movies_api.views.jsonResponse404'
 
 urlpatterns = [
-    path('api/v1/movies/', include('movies.urls')),
-    path('api/v1/auth/', include('auth.urls')),
+    path('api/v1/movies', include('movies.urls')),
+    path('api/v1/auth', include('auth.urls')),
     path('admin/', admin.site.urls),
 ]
