@@ -5,9 +5,15 @@ import inflection
 
 class CustomJSONRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
+        status = renderer_context.get('response').status_code
+
+        # Return an enpty body for responses with 204 status code.
+        if status == 204:
+            return super(CustomJSONRenderer, self).render(
+                None, accepted_media_type, renderer_context)
+
         actions = {'GET': 'retrieved', 'POST': 'created', 'PUT': 'updated'}
 
-        status = renderer_context.get('response').status_code
         request_method = renderer_context.get('request').method
         action = actions.get(request_method, None)
         resource_name = renderer_context.get('resource_name')
