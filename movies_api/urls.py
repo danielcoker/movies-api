@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+handler404 = 'movies_api.views.jsonResponse404'
+
 urlpatterns = [
     path('api/v1/movies/', include('movies.urls')),
     path('api/v1/auth/', include('auth.urls')),
